@@ -9,7 +9,7 @@ Route::name('public.')->group(function () {
     Route::get('/', \App\Livewire\Public\Homepage::class)->name('homepage');
 });
 
-Route::name('app.')->prefix('app.')->middleware(['auth', 'verified'])->group(function () {
+Route::name('app.')->prefix('app.')->middleware(['auth', 'verified', 'role:admin'])->group(function () {
     Route::get('/', \App\Livewire\App\Homepage::class)->name('homepage');
 });
 
