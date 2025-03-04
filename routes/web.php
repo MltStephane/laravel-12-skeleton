@@ -5,13 +5,13 @@ use App\Livewire\Settings\Password;
 use App\Livewire\Settings\Profile;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-})->name('home');
+Route::name('public.')->group(function () {
+    Route::get('/', \App\Livewire\Public\Homepage::class)->name('homepage');
+});
 
-Route::view('dashboard', 'dashboard')
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
+Route::name('app.')->prefix('app.')->middleware(['auth', 'verified'])->group(function () {
+    Route::get('/', \App\Livewire\App\Homepage::class)->name('homepage');
+});
 
 Route::middleware(['auth'])->group(function () {
     Route::redirect('settings', 'settings/profile');
@@ -21,4 +21,4 @@ Route::middleware(['auth'])->group(function () {
     Route::get('settings/appearance', Appearance::class)->name('settings.appearance');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
