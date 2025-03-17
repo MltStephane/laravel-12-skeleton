@@ -22,7 +22,9 @@
                         :href="route('app.homepage')"
                         :current="request()->routeIs('app.homepage')"
                         wire:navigate
-                    >{{ __('Dashboard') }}</flux:navlist.item>
+                    >
+                        {{ __('Dashboard') }}
+                    </flux:navlist.item>
                 </flux:navlist.group>
             </flux:navlist>
 
@@ -51,7 +53,7 @@
                 />
 
                 <flux:menu class="w-[220px]">
-                    <flux:menu.radio.group>
+                    <flux:menu.group>
                         <div class="p-0 text-sm font-normal">
                             <div class="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                                 <span class="relative flex h-8 w-8 shrink-0 overflow-hidden rounded-lg">
@@ -68,26 +70,50 @@
                                 </div>
                             </div>
                         </div>
-                    </flux:menu.radio.group>
+                    </flux:menu.group>
 
-                    <flux:menu.separator />
-
-                    <flux:menu.radio.group>
+                    <flux:menu.group heading="Compte">
                         <flux:menu.item
                             href="/settings/profile"
                             icon="cog"
                             wire:navigate
-                        >{{ __('Settings') }}</flux:menu.item>
-                    </flux:menu.radio.group>
-
-                    <flux:menu.separator />
-
-                    <form method="POST" action="{{ route('logout') }}" class="w-full">
-                        @csrf
-                        <flux:menu.item as="button" type="submit" icon="arrow-right-start-on-rectangle" class="w-full">
-                            {{ __('Log Out') }}
+                        >
+                            {{ __('Settings') }}
                         </flux:menu.item>
-                    </form>
+
+                        <form method="POST" action="{{ route('logout') }}" class="w-full">
+                            @csrf
+                            <flux:menu.item
+                                as="button"
+                                type="submit"
+                                icon="arrow-right-start-on-rectangle"
+                                class="w-full"
+                            >
+                                {{ __('Log Out') }}
+                            </flux:menu.item>
+                        </form>
+                    </flux:menu.group>
+
+                    <flux:menu.group heading="Équipe">
+                        <flux:menu.item icon="cog" href="{{ route('teams.show', Auth::user()->currentTeam->id) }}">
+                            {{ __('Team Settings') }}
+                        </flux:menu.item>
+
+                        @can('create', Laravel\Jetstream\Jetstream::newTeamModel())
+                            <flux:menu.item icon="plus" href="{{ route('teams.create') }}">
+                                {{ __('Create New Team') }}
+                            </flux:menu.item>
+                        @endcan
+
+                    </flux:menu.group>
+
+                    @if (Auth::user()->allTeams()->count() > 1)
+                        <flux:menu.group heading="Changer d'équipe">
+                            @foreach (Auth::user()->allTeams() as $team)
+                                <x-switchable-team :team="$team" />
+                            @endforeach
+                        </flux:menu.group>
+                    @endif
                 </flux:menu>
             </flux:dropdown>
         </flux:sidebar>
@@ -105,7 +131,7 @@
                 />
 
                 <flux:menu>
-                    <flux:menu.radio.group>
+                    <flux:menu.group>
                         <div class="p-0 text-sm font-normal">
                             <div class="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                                 <span class="relative flex h-8 w-8 shrink-0 overflow-hidden rounded-lg">
@@ -122,15 +148,11 @@
                                 </div>
                             </div>
                         </div>
-                    </flux:menu.radio.group>
+                    </flux:menu.group>
 
-                    <flux:menu.separator />
-
-                    <flux:menu.radio.group>
+                    <flux:menu.group heading="Compte">
                         <flux:menu.item href="/settings/profile" icon="cog" wire:navigate>Settings</flux:menu.item>
-                    </flux:menu.radio.group>
-
-                    <flux:menu.separator />
+                    </flux:menu.group>
 
                     <form method="POST" action="{{ route('logout') }}" class="w-full">
                         @csrf

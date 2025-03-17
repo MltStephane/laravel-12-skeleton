@@ -9,9 +9,12 @@ Route::name('public.')->group(function () {
     Route::get('/', \App\Livewire\Public\Homepage::class)->name('homepage');
 });
 
-Route::name('app.')->prefix('app.')->middleware(['auth', 'verified', 'role:admin'])->group(function () {
-    Route::get('/', \App\Livewire\App\Homepage::class)->name('homepage');
-});
+Route::name('app.')
+    ->prefix('/app')
+    ->middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified'])
+    ->group(function () {
+        Route::get('/', \App\Livewire\App\Homepage::class)->name('homepage');
+    });
 
 Route::middleware(['auth'])->group(function () {
     Route::redirect('settings', 'settings/profile');
